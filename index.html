@@ -1,0 +1,152 @@
+<!doctype html>
+<html lang="es">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Asciiverso · Convierte imágenes y videos en arte ASCII animado</title>
+  <meta name="description" content="Convierte cualquier imagen, video o tu cámara en arte ASCII animado, directo en el navegador. Gratis, sin registrarte y sin subir tus archivos a ningún servidor." />
+  <meta name="theme-color" content="#07070b" />
+  <link rel="icon" href="favicon.svg" type="image/svg+xml" />
+  <meta property="og:type" content="website" />
+  <meta property="og:title" content="Asciiverso · arte ASCII animado" />
+  <meta property="og:description" content="Convierte imágenes y videos en arte ASCII animado. Gratis y en tu navegador." />
+  <meta property="og:image" content="og.png" />
+  <meta name="twitter:card" content="summary_large_image" />
+  <link rel="stylesheet" href="css/styles.css" />
+  <script type="application/ld+json">
+  {"@context":"https://schema.org","@type":"WebApplication","name":"Asciiverso","applicationCategory":"MultimediaApplication","operatingSystem":"Web","offers":{"@type":"Offer","price":"0","priceCurrency":"COP"},"description":"Convierte imágenes y videos en arte ASCII animado directamente en el navegador.","author":{"@type":"Person","name":"Juan Sebastián López Valencia"}}
+  </script>
+</head>
+<body>
+  <a class="saltar" href="#principal">Saltar al contenido</a>
+  <div id="drop" class="drop" aria-hidden="true"><p>Suelta tu imagen o video</p></div>
+
+  <header class="cabecera">
+    <a class="marca" href="./" aria-label="Asciiverso, inicio"><span aria-hidden="true">[</span>asciiverso<span aria-hidden="true">]</span></a>
+    <p class="lema">Imágenes y videos convertidos en arte ASCII animado. Todo pasa en tu navegador: tus archivos no se suben a ningún lado.</p>
+  </header>
+
+  <main id="principal" class="principal">
+    <h1 class="sr-only">Asciiverso: convertidor de imágenes y videos a arte ASCII</h1>
+
+    <section class="escena" aria-label="Vista previa">
+      <div id="vacio" class="vacio">
+        <pre class="logo-ascii" aria-hidden="true">
+   .-.   .-.   .-.
+  ( @ ) ( # ) ( % )
+   '-'   '-'   '-'</pre>
+        <p class="vacio-titulo">Arrastra una imagen o un video aquí</p>
+        <p class="vacio-sub">También puedes pegarla con Ctrl+V</p>
+        <div class="vacio-botones">
+          <label class="boton primario" for="archivo">Elegir archivo</label>
+          <input id="archivo" class="sr-only" type="file" accept="image/*,video/*" />
+          <button id="demo" class="boton" type="button">Probar con un agujero negro</button>
+          <button id="camara" class="boton" type="button">Usar mi cámara</button>
+        </div>
+      </div>
+      <div id="escenario" class="escenario" hidden>
+        <canvas id="lienzo" role="img" aria-label="Tu imagen convertida en arte ASCII"></canvas>
+      </div>
+      <video id="video" class="sr-only" muted playsinline aria-hidden="true"></video>
+      <div id="acciones" class="acciones" hidden>
+        <button id="restart" class="boton" type="button">Reiniciar</button>
+        <button id="pause" class="boton" type="button" aria-pressed="false">Pausar</button>
+        <span class="separador" aria-hidden="true"></span>
+        <button id="grabar" class="boton primario" type="button">Grabar video</button>
+        <button id="png" class="boton" type="button">Descargar PNG</button>
+        <button id="txt" class="boton" type="button">Descargar .txt</button>
+        <button id="copiar" class="boton" type="button">Copiar texto</button>
+        <label class="boton" for="archivo2">Otro archivo</label>
+        <input id="archivo2" class="sr-only" type="file" accept="image/*,video/*" />
+      </div>
+      <p id="estado" class="estado" role="status" aria-live="polite"></p>
+    </section>
+
+    <aside class="panel" aria-label="Ajustes">
+      <h2>Ajustes</h2>
+
+      <div class="campo">
+        <label for="animation">Animación</label>
+        <select id="animation">
+          <option value="ensamblar">Ensamblar (solo imágenes)</option>
+          <option value="respirar">Respirar</option>
+          <option value="lluvia">Lluvia tipo Matrix</option>
+          <option value="glitch">Glitch</option>
+          <option value="ninguna">Ninguna</option>
+        </select>
+      </div>
+
+      <div class="campo">
+        <label for="speed">Velocidad <output id="speed-v"></output></label>
+        <input id="speed" type="range" min="0.25" max="3" step="0.25" value="1" />
+      </div>
+
+      <div class="campo">
+        <label for="cols">Detalle (columnas) <output id="cols-v"></output></label>
+        <input id="cols" type="range" min="30" max="260" step="2" value="120" />
+      </div>
+
+      <div class="campo">
+        <label for="charset">Caracteres</label>
+        <select id="charset">
+          <option value="clasico">Clásico  .:-=+*#%@</option>
+          <option value="detallado">Detallado (70 caracteres)</option>
+          <option value="bloques">Bloques ░▒▓█</option>
+          <option value="puntos">Puntos ·:•●</option>
+          <option value="binario">Binario 01</option>
+          <option value="matrix">Matrix (katakana)</option>
+          <option value="custom">Personalizado…</option>
+        </select>
+      </div>
+      <div id="custom-field" class="campo" hidden>
+        <label for="custom">Tus caracteres (de menos a más denso)</label>
+        <input id="custom" type="text" maxlength="40" value="·oO@" />
+      </div>
+
+      <div class="campo">
+        <label for="colorMode">Color</label>
+        <select id="colorMode">
+          <option value="original">Colores originales</option>
+          <option value="mono">Un solo color</option>
+        </select>
+      </div>
+      <div id="mono-field" class="campo campo-fila" hidden>
+        <label for="mono">Color de los caracteres</label>
+        <input id="mono" type="color" value="#ffb347" />
+      </div>
+      <div class="campo campo-fila">
+        <label for="bg">Color de fondo</label>
+        <input id="bg" type="color" value="#07070b" />
+      </div>
+
+      <div class="campo">
+        <label for="contrast">Contraste <output id="contrast-v"></output></label>
+        <input id="contrast" type="range" min="0.5" max="2.5" step="0.1" value="1.2" />
+      </div>
+      <div class="campo">
+        <label for="brightness">Brillo <output id="brightness-v"></output></label>
+        <input id="brightness" type="range" min="0.4" max="2" step="0.1" value="1" />
+      </div>
+      <div class="campo campo-check">
+        <input id="invert" type="checkbox" />
+        <label for="invert">Invertir (útil con fondos claros)</label>
+      </div>
+      <div class="campo">
+        <label for="fontSize">Tamaño de letra al exportar <output id="fontSize-v"></output></label>
+        <input id="fontSize" type="range" min="6" max="24" step="1" value="12" />
+      </div>
+
+      <div id="video-ctrls" class="nota" hidden>
+        <p>En videos, "Grabar video" lo reproduce desde el inicio y graba hasta el final (máximo 60 s).</p>
+      </div>
+    </aside>
+  </main>
+
+  <footer class="pie">
+    <p>Hecho por <a href="https://miportafoliocd.netlify.app">Jachi</a> · Código abierto en <a href="https://github.com/jsLopez1104/asciiverso">GitHub</a></p>
+    <p>Privacidad: Asciiverso no tiene servidor ni cookies. Las imágenes, los videos y la cámara se procesan solo en tu dispositivo.</p>
+  </footer>
+
+  <script type="module" src="js/app.js"></script>
+</body>
+</html>
