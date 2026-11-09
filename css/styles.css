@@ -109,7 +109,9 @@ a:hover { color: var(--color-primario-hover); }
 .boton.primario { background: var(--color-primario); color: var(--color-texto-sobre-primario); border-color: var(--color-primario); font-weight: 600; }
 .boton.primario:hover { background: var(--color-primario-hover); }
 .boton:disabled { opacity: 0.6; cursor: progress; }
-input[type="file"]:focus-visible + .boton, .vacio-botones input:focus-visible { outline: 2px solid var(--color-foco); }
+/* El input de archivo está oculto: el foco del teclado se muestra en su etiqueta-botón */
+.vacio-botones:has(#archivo:focus-visible) label[for="archivo"],
+.acciones:has(#archivo2:focus-visible) label[for="archivo2"] { outline: 2px solid var(--color-foco); outline-offset: 2px; }
 
 .estado { min-height: 1.5em; margin: 0; color: var(--color-texto-suave); font-size: 0.9rem; }
 
